@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>清洁机器人 · 产品原型</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#1F66F1;--blue-soft:#EDF3FF;--text:#1B1F27;--sub:#5A6272;--hint:#8A93A3;--line:#E6EAF0;--bg:#F5F7FB;
+}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+  background:var(--bg);color:var(--text);min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;
+  padding:64px 24px 48px;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{width:100%;max-width:980px}
+.head{margin-bottom:36px}
+.eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--blue);
+  background:var(--blue-soft);border-radius:999px;padding:5px 13px;margin-bottom:18px;letter-spacing:.3px}
+.eyebrow i{width:6px;height:6px;border-radius:50%;background:var(--blue);display:block}
+h1{font-size:34px;font-weight:700;letter-spacing:-.5px;line-height:1.25}
+h1 span{color:var(--blue)}
+.sub{margin-top:12px;font-size:16px;color:var(--sub);line-height:1.7;max-width:680px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:8px}
+.card{
+  background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;
+  display:flex;flex-direction:column;transition:box-shadow .22s,transform .22s,border-color .22s;
+  text-decoration:none;color:inherit;
+}
+.card:hover{box-shadow:0 12px 32px rgba(27,31,39,.10);transform:translateY(-3px);border-color:#CEDBF5}
+.thumb{height:186px;background:linear-gradient(160deg,#EEF3FB,#E4EBF7);position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--line)}
+.card-body{padding:20px 22px 22px;display:flex;flex-direction:column;flex:1}
+.card h2{font-size:20px;font-weight:700;letter-spacing:-.2px}
+.tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.tag{font-size:12px;font-weight:600;color:var(--sub);background:#F1F4F9;border-radius:6px;padding:3px 9px}
+.desc{margin-top:12px;font-size:14.5px;color:var(--sub);line-height:1.65;flex:1}
+.go{margin-top:18px;display:inline-flex;align-items:center;justify-content:space-between;gap:8px;
+  font-size:15px;font-weight:600;color:var(--blue);
+  background:var(--blue-soft);border-radius:9px;padding:11px 16px}
+.card:hover .go{background:var(--blue);color:#fff}
+.go em{font-style:normal;transition:transform .2s}
+.card:hover .go em{transform:translateX(3px)}
+.foot{margin-top:34px;font-size:13px;color:var(--hint);line-height:1.8}
+
+/* ===== 缩略示意图 ===== */
+.mock{width:100%;height:100%;position:absolute;inset:0;padding:16px;display:flex;gap:12px}
+.m-panel{background:#fff;border-radius:10px;box-shadow:0 3px 14px rgba(27,31,39,.10);flex:1;overflow:hidden;display:flex;flex-direction:column}
+.m-bar{height:26px;background:#F7F9FC;border-bottom:1px solid #EEF1F6;display:flex;align-items:center;gap:5px;padding:0 9px;flex:none}
+.m-bar i{width:7px;height:7px;border-radius:50%;background:#D8DFEA;display:block}
+.m-bar b{margin-left:auto;font-size:8px;color:#fff;background:var(--blue);border-radius:4px;padding:2px 7px;font-weight:600}
+.m-in{padding:10px;display:flex;flex-direction:column;gap:6px;overflow:hidden}
+.m-t{font-size:10px;font-weight:700;color:var(--text)}
+.m-row{height:9px;border-radius:3px;background:#E7EDF7}
+.m-row.w60{width:60%}.m-row.w40{width:40%}
+.m-grid{display:flex;gap:5px;margin-top:2px}
+.m-cell{flex:1;height:34px;border-radius:5px;background:#DCE7F8;border:1px solid #CFDDF2}
+.m-cell.on{background:#fff;border:1.5px solid var(--blue);box-shadow:0 0 0 2px rgba(31,102,241,.10)}
+.m-list{display:flex;flex-direction:column;gap:5px}
+.m-li{display:flex;align-items:center;gap:5px}
+.m-li:before{content:"";width:9px;height:9px;border-radius:2px;background:#D7E0EE;flex:none}
+.m-li span{height:7px;border-radius:2px;background:#E7EDF7;flex:1}
+.m-pill{margin-left:auto;width:32px;height:9px;border-radius:999px;background:#E7EDF7;flex:none}
+.m-pill.on{background:var(--blue)}
+/* 手机态缩略 */
+.phone{width:104px;height:154px;background:#fff;border-radius:14px;border:3px solid #2B3038;
+  box-shadow:0 6px 20px rgba(27,31,39,.18);overflow:hidden;display:flex;flex-direction:column}
+.phone .p-hd{height:24px;background:#fff;border-bottom:1px solid #EEF1F6;display:flex;align-items:center;justify-content:space-between;padding:0 7px;flex:none}
+.phone .p-hd b{font-size:8px;font-weight:700;color:var(--text)}
+.phone .p-hd i{font-size:7px;color:#fff;background:var(--blue);border-radius:3px;padding:1px 5px;font-style:normal}
+.phone .p-bd{padding:6px;display:flex;flex-direction:column;gap:5px;overflow:hidden}
+.phone .p-card{background:#F7F9FC;border-radius:5px;padding:5px}
+.phone .p-card .k{font-size:7px;font-weight:700;color:var(--sub);margin-bottom:3px}
+.phone .p-it{display:flex;align-items:center;gap:3px;margin-top:3px}
+.phone .p-it span{height:5px;border-radius:2px;background:#E4EAF4;flex:1}
+.phone .p-it .g{display:flex;gap:2px;flex:none}
+.phone .p-it .g b{font-size:5px;font-weight:600;color:#9AA3B0;background:#fff;border:1px solid #E4E9F0;border-radius:2px;padding:0 2px;line-height:8px}
+.phone .p-it .g b.sel{background:var(--blue);border-color:var(--blue);color:#fff}
+
+@media (max-width:760px){
+  body{padding:40px 16px}
+  h1{font-size:26px}
+  .cards{grid-template-columns:1fr;gap:16px}
+  .thumb{height:160px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="eyebrow"><i></i>产品原型 · 场景模型能力</div>
+    <h1>清洁机器人 <span>产品原型</span></h1>
+    <p class="sub">围绕「场景模型」能力串联的两端：云端建图时按场景匹配模型，本体端按模型下发可识别的能力清单。以下为可交互原型，点击卡片直接体验。</p>
+  </div>
+
+  <div class="cards">
+    <a class="card" href="map/index.html">
+      <div class="thumb">
+        <div class="mock">
+          <div class="m-panel">
+            <div class="m-bar"><i></i><i></i><i></i><b>新建</b></div>
+            <div class="m-in">
+              <div class="m-t">地图列表</div>
+              <div class="m-grid">
+                <div class="m-cell"></div>
+                <div class="m-cell"></div>
+                <div class="m-cell"></div>
+              </div>
+              <div class="m-grid">
+                <div class="m-cell"></div>
+                <div class="m-cell"></div>
+                <div class="m-cell on"></div>
+              </div>
+              <div class="m-row w60"></div>
+              <div class="m-row w40"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <h2>地图场景模型</h2>
+        <div class="tags"><span class="tag">地图列表</span><span class="tag">建图信息</span><span class="tag">建图方式</span><span class="tag">场景模型匹配</span></div>
+        <p class="desc">建图流程中按场景自动匹配模型，支持手动切换；含「什么是场景模型」说明弹窗、场景与默认模型映射表、修改路径图示。</p>
+        <div class="go">进入原型 <em>→</em></div>
+      </div>
+    </a>
+
+    <a class="card" href="ai/index.html">
+      <div class="thumb">
+        <div class="phone">
+          <div class="p-hd"><b>AI清洁策略</b><i>保存</i></div>
+          <div class="p-bd">
+            <div class="p-card">
+              <div class="k">当前场景模型</div>
+              <div class="p-it"><span></span></div>
+              <div class="p-it"><span style="width:60%"></span></div>
+            </div>
+            <div class="p-card">
+              <div class="k">湿垃圾</div>
+              <div class="p-it"><span></span><div class="g"><b class="sel">清扫</b><b>避让</b></div></div>
+              <div class="p-it"><span></span><div class="g"><b class="sel">清扫</b><b>避让</b></div></div>
+            </div>
+            <div class="p-card">
+              <div class="k">障碍物</div>
+              <div class="p-it"><span></span><div class="g"><b>清扫</b><b class="sel">避让</b></div></div>
+              <div class="p-it"><span></span><div class="g"><b>清扫</b><b class="sel">避让</b></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <h2>本体 AI 清洁策略</h2>
+        <div class="tags"><span class="tag">设置页</span><span class="tag">能力清单</span><span class="tag">清扫 / 避让 / 不处理</span></div>
+        <p class="desc">真机设置页 AI 清洁策略：按湿垃圾、干垃圾、障碍物分组的能力清单，每项可配置处理策略；能力清单随场景模型自动匹配。</p>
+        <div class="go">进入原型 <em>→</em></div>
+      </div>
+    </a>
+  </div>
+
+  <p class="foot">原型为交互演示，数据与文案用于方案评审，非最终线上版本。</p>
+</div>
+<script>
+(function(){
+  var q = location.search;
+  if (!q) return;
+  document.querySelectorAll('a.card').forEach(function(a){
+    var h = a.getAttribute('href');
+    if (h.indexOf('?') < 0) a.setAttribute('href', h + q);
+  });
+})();
+</script>
+</body>
+</html>

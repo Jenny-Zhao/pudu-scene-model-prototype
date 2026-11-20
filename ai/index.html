@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>本体设置 · AI 清洁策略（场景模型能力选择）· 需求原型</title>
+<style>
+/* ============================================================
+   设计令牌 —— 对齐真机原型（PUDU CC1 Pro 设置，1280×800）
+   ============================================================ */
+:root {
+  --c-primary:      #1B62FF;
+  --c-primary-soft: #E4EEFF;
+  --c-green:        #12B76A;
+  --c-red:          #F04438;
+  --c-bg:           #D9DCE2;
+  --c-card:         #FFFFFF;
+  --c-text-1:       #1B1F27;
+  --c-text-2:       #7A8089;
+  --c-text-3:       #9AA1AB;
+  --c-toggle-off:   #A7A9AE;
+  --c-line:         #C9CDD3;
+  --r-card: 12px;
+  --bar-h: 88px;
+  --side-w: 412px;
+  --fs-menu: 30px;  --fs-label: 26px;  --fs-title: 30px;
+  --fs-value: 28px; --fs-desc: 24px;   --fs-bar: 30px;
+  --font: "MiSans","HarmonyOS Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:#171A1F;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;font-family:var(--font);overflow:hidden}
+.device{position:relative;width:min(1060px,94vw);aspect-ratio:1280/800;background:var(--c-bg);border-radius:20px;border:10px solid #20242B;box-shadow:0 24px 60px rgba(0,0,0,.5);overflow:hidden}
+.ui{position:absolute;top:0;left:0;width:1280px;height:800px;transform-origin:top left;display:flex;flex-direction:column;background:var(--c-bg)}
+.caption{color:#6B7280;font-size:13px;text-align:center;max-width:900px}
+.caption b{color:#9CA3AF;font-weight:500}
+
+/* ===== 顶栏 ===== */
+.topbar{height:var(--bar-h);flex:none;background:var(--c-card);display:flex;align-items:center;padding:0 0 0 40px;position:relative;z-index:5}
+.topbar .back{display:flex;align-items:center;gap:14px;font-size:var(--fs-bar);color:var(--c-text-1);background:none;border:none;cursor:pointer;font-family:inherit}
+.topbar .back svg{width:26px;height:26px}
+.topbar .tt{font-size:var(--fs-bar);font-weight:600;color:var(--c-text-1)}
+
+/* ===== 主体 ===== */
+.body{flex:1;display:flex;min-height:0}
+.sidebar{width:var(--side-w);flex:none;padding:16px 24px;overflow-y:auto;scrollbar-width:none;border-right:1px solid #cdd1d8}
+.sidebar::-webkit-scrollbar{display:none}
+.mi{position:relative;height:90px;margin-bottom:16px;background:var(--c-card);border:none;border-radius:12px;display:flex;align-items:center;gap:24px;padding:0 32px;font-size:var(--fs-menu);color:var(--c-text-1);font-family:inherit;cursor:pointer;text-align:left;width:100%}
+.mi svg{width:34px;height:34px;color:#4A5058;flex:none}
+.mi:hover{background:#FAFBFC}
+.mi.active{background:var(--c-primary);color:#fff;font-weight:500}
+.mi.active svg{color:#fff}
+.content{flex:1;min-width:0;padding:22px 24px 22px 33px;overflow-y:auto;scrollbar-width:none}
+.content::-webkit-scrollbar{display:none}
+.page{display:none}
+.page.on{display:block}
+.sl{font-size:var(--fs-label);color:#3D434D;margin:8px 0 14px}
+.card{background:var(--c-card);border-radius:var(--r-card);margin-bottom:22px;overflow:hidden}
+.row{min-height:96px;display:flex;align-items:center;padding:0 48px 0 24px;position:relative}
+.row+.row{border-top:1px solid #F0F1F4}
+.row .t{font-size:var(--fs-title);color:var(--c-text-1)}
+.chev{width:20px;height:20px;color:#B6BCC6;flex:none}
+.desc{padding:0 48px 22px 24px;font-size:var(--fs-desc);color:var(--c-text-2);line-height:1.55}
+.rowpad{padding-top:22px}
+
+/* ===== 开关 ===== */
+.tg{margin-left:auto;flex:none;width:80px;height:44px;border-radius:999px;background:var(--c-toggle-off);position:relative;cursor:pointer;border:none;transition:background .15s}
+.tg::after{content:'';position:absolute;top:4px;left:4px;width:36px;height:36px;border-radius:50%;background:#fff;transition:left .15s}
+.tg.on{background:var(--c-green)}
+.tg.on::after{left:40px}
+
+/* ===== 二级全屏页 ===== */
+.ui.has-full>.topbar,.ui.has-full>.body{display:none}
+.fullpage{display:none;flex:1;min-height:0;flex-direction:column;background:var(--c-bg)}
+.fullpage.on{display:flex}
+.fullpage .fp-body{flex:1;min-height:0;overflow-y:auto;scrollbar-width:none;position:relative}
+.fullpage .fp-body::-webkit-scrollbar{display:none}
+
+/* ===== AI 清洁策略 ===== */
+.ai-head{display:flex;align-items:center;justify-content:center;gap:14px;padding:6px 0 18px;font-size:34px;color:var(--c-text-1);position:relative}
+.ai-head .q{width:34px;height:34px;border-radius:50%;border:2px solid #9AA1AB;color:#9AA1AB;font-size:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
+.ai-head .save{position:absolute;right:10px;color:var(--c-primary);font-size:30px;background:none;border:none;cursor:pointer;font-family:inherit}
+.ai-sec{font-size:28px;color:var(--c-text-1);padding:14px 6px 14px}
+.ai-sec .note{font-size:22px;color:var(--c-text-2);font-weight:400}
+.ai-card{background:#fff;border-radius:14px;overflow:hidden;margin-bottom:8px}
+.ai-row{display:flex;align-items:center;gap:22px;padding:16px 26px;min-height:128px}
+.ai-row+.ai-row{border-top:1px solid #F0F1F4}
+.ai-thumb{flex:none;width:120px;height:88px;border-radius:10px;background:#EDEEF0}
+.ai-row .nm{font-size:29px;color:var(--c-text-1);display:flex;align-items:center;gap:10px;min-width:300px}
+.ai-row .nm .q{width:30px;height:30px;border-radius:50%;border:2px solid #9AA1AB;color:#9AA1AB;font-size:21px;display:flex;align-items:center;justify-content:center;flex:none;cursor:pointer}
+.ai-row .nm .tag{font-size:20px;color:var(--c-primary);background:var(--c-primary-soft);border-radius:999px;padding:2px 14px;white-space:nowrap}
+.tri{margin-left:auto;display:flex;background:#EEF0F3;border-radius:8px;overflow:hidden;flex:none}
+.tri button{min-width:150px;height:64px;border:none;background:transparent;font-size:26px;color:#5C626B;font-family:inherit;cursor:pointer;padding:0 10px}
+.tri button.on{background:var(--c-primary-soft);color:var(--c-primary);box-shadow:inset 0 0 0 2px var(--c-primary);border-radius:8px}
+
+/* ===== 当前场景模型行 ===== */
+.mdl-card{background:#fff;border-radius:14px;padding:20px 26px;margin:0 0 10px;cursor:pointer;position:relative}
+.mdl-card .r1{display:flex;align-items:center;gap:16px}
+.mdl-card .lab{font-size:24px;color:var(--c-text-2)}
+.mdl-card .val{font-size:28px;color:var(--c-primary);font-weight:600;display:flex;align-items:center;gap:10px}
+.mdl-card .val svg{width:22px;height:22px}
+.mdl-card .mh{margin-left:auto;width:32px;height:32px;border-radius:50%;border:2px solid #9AA1AB;color:#9AA1AB;font-size:22px;display:flex;align-items:center;justify-content:center}
+.mdl-card .r2{font-size:22px;color:var(--c-text-2);margin-top:10px;line-height:1.5}
+.mdl-card .r2 b{color:var(--c-text-1);font-weight:600}
+
+/* ===== 弹层 ===== */
+.overlay{display:none;position:absolute;inset:0;background:rgba(0,0,0,.42);z-index:30;align-items:center;justify-content:center}
+.overlay.on{display:flex}
+.dlg{background:#F2F3F5;border-radius:16px;box-shadow:0 18px 60px rgba(0,0,0,.28);width:560px;overflow:hidden}
+.dlg .dlg-title{text-align:center;font-size:30px;color:var(--c-text-1);padding:28px 30px 10px;font-weight:600}
+.dlg .dlg-body{font-size:26px;color:var(--c-text-1);text-align:center;padding:26px 44px 10px;line-height:1.6}
+.dlg .dlg-ok{display:block;margin:26px auto 30px;background:var(--c-primary);color:#fff;border:none;font-size:26px;font-family:inherit;padding:18px 0;width:440px;border-radius:10px;cursor:pointer}
+/* 模型选择弹窗 */
+.msel{width:640px}
+.msel .mi-list{padding:8px 16px 16px;max-height:520px;overflow-y:auto}
+.msel .opt{min-height:88px;padding:0 22px;cursor:pointer}
+.msel .opt .name{font-size:28px}
+.msel .opt .soon{margin-left:12px;font-size:20px;color:#9AA1AB;background:#E9ECF0;border-radius:999px;padding:2px 14px}
+.msel .opt.dis{opacity:.45;cursor:not-allowed}
+.msel .opt.dis .name{color:var(--c-text-2)}
+/* 策略定义深色浮层 */
+.def-tip{position:absolute;left:50%;top:150px;transform:translateX(-50%);width:820px;background:rgba(30,34,40,.94);border-radius:14px;padding:30px 40px 34px;z-index:40;display:none;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.def-tip.on{display:block}
+.def-tip .it{font-size:26px;color:#fff;line-height:1.7;text-align:left}
+.def-tip .it b{color:#7FB0FF;font-weight:600}
+.def-tip .ok{display:block;margin:24px auto 0;background:var(--c-primary);color:#fff;border:none;font-size:26px;font-family:inherit;padding:14px 0;width:300px;border-radius:10px;cursor:pointer}
+
+/* ===== toast ===== */
+.mini-toast{position:absolute;left:50%;bottom:90px;transform:translateX(-50%);z-index:80;background:rgba(30,34,40,.85);color:#fff;font-size:24px;padding:14px 34px;border-radius:999px;display:none;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="device">
+  <div class="ui" id="ui">
+
+    <!-- ==================== 设置主页 ==================== -->
+    <div class="topbar"><span class="tt">设置</span></div>
+    <div class="body" id="mainBody">
+      <div class="sidebar">
+        <button class="mi" onclick="sideStub(this,'人机协作')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.7-3.2 2.9-5 5.5-5s4.8 1.8 5.5 5"/><rect x="14" y="9" width="7" height="6" rx="1.5"/><path d="M15.5 15v2.5h4V15"/></svg>人机协作</button>
+        <button class="mi active" onclick="sideGo(this,'p_clean')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l6-6 4 4 6-8"/><path d="M14 7h6v6"/><path d="M3 21h18"/></svg>清洁设置</button>
+        <button class="mi" onclick="sideStub(this,'充电设置')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2.8M15 4V2.8"/><path d="M12 9v5M9.8 11.2h4.4"/></svg>充电设置</button>
+        <button class="mi" onclick="sideStub(this,'保养提醒')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="13" rx="2"/><path d="M7 9.5h6M7 12.5h4"/><path d="M16 13l2 2 3-3.5"/></svg>保养提醒</button>
+        <button class="mi" onclick="sideStub(this,'网络')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 9.5C8 4.5 16 4.5 21.5 9.5M5.5 13c4-3.6 9-3.6 13 0M9 16.5c1.8-1.6 4.2-1.6 6 0"/><circle cx="12" cy="19.6" r="1.3" fill="currentColor" stroke="none"/></svg>网络</button>
+        <button class="mi" onclick="sideStub(this,'速度')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20a8 8 0 118-8"/><path d="M12 12l5-3"/><path d="M17.5 4.5L21 4l-.5 3.5"/></svg>速度</button>
+        <button class="mi" onclick="sideStub(this,'语言灯光和动画')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></svg>语言灯光和动画</button>
+      </div>
+      <div class="content">
+        <!-- 清洁设置 -->
+        <div class="page on" id="p_clean">
+          <div class="sl">AI清洁</div>
+          <div class="card">
+            <div class="row rowpad" style="cursor:pointer;align-items:flex-start" onclick="openFull('aipolicy')">
+              <div style="padding-bottom:24px">
+                <div class="t">AI清洁策略</div>
+                <div class="desc" style="padding:8px 0 0">定义机器人自动清洁时对应部分物体的策略：清扫、避让或不处理</div>
+              </div>
+              <svg class="chev" style="position:absolute;right:28px;top:38px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 5l7 7-7 7"/></svg>
+            </div>
+            <div class="row">
+              <span class="t">清洁效果检测</span>
+              <button class="tg on" data-toggle></button>
+            </div>
+            <div class="desc">开启后，清洁完成后会生成清洁效果检测的热力图，显示清洁过程中有脏污的区域</div>
+            <div class="row">
+              <span class="t">AI 豁免</span>
+              <button class="tg" data-toggle></button>
+            </div>
+            <div class="desc">机器人在清洁过程中，可能会将地面磨损、破裂也识别为脏污。开启该功能后，会对同一位置多次检测到的脏污做豁免处理，不再识别为脏污。同时巡检清洁、AI自适应清洁参数功能也不会对豁免后的脏污生效</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== AI 清洁策略（二级页） ==================== -->
+    <div class="fullpage" id="aipolicy">
+      <div class="topbar" style="border-bottom:1px solid #DDE0E5"><button class="back" onclick="backOut()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>返回</button></div>
+      <div class="fp-body">
+        <div class="ai-head"><span style="color:var(--c-primary);font-weight:700">AI</span>AI清洁策略 <span class="q" onclick="showDefTip(event)">?</span><button class="save" onclick="savePolicy()">保存</button></div>
+
+        <div style="padding:0 16px">
+          <!-- 当前场景模型（能力清单来源） -->
+          <div class="mdl-card" onclick="openModelSel()">
+            <div class="r1">
+              <span class="lab">当前场景模型</span>
+              <span class="val" id="mdlVal">室内商超模型<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+              <span class="mh" onclick="event.stopPropagation();modelHelp(event)">?</span>
+            </div>
+            <div class="r2">能力清单随地图的<b>场景模型</b>自动匹配；切换模型后，本页能力列表同步更新。</div>
+          </div>
+
+          <div id="aiList"></div>
+        </div>
+      </div>
+
+      <!-- 策略定义浮层 -->
+      <div class="def-tip" id="defTip">
+        <div class="it"><b>清扫</b>：机器人识别到该物体后，主动调节清洁机构进行清洁</div>
+        <div class="it"><b>避让</b>：机器人识别到该物体后，当作障碍物绕开</div>
+        <div class="it"><b>不处理</b>：机器人按原路径直接通过，不做特殊处理（可能清洁、接触该物体）</div>
+        <button class="ok" onclick="hideDefTip()">完成</button>
+      </div>
+    </div>
+
+    <!-- ==================== 弹层 ==================== -->
+    <!-- 条目说明 -->
+    <div class="overlay" id="ovInfo">
+      <div class="dlg">
+        <div class="dlg-title" id="infoTitle">物体说明</div>
+        <div class="dlg-body" id="infoBody"></div>
+        <button class="dlg-ok" onclick="closeOvl('ovInfo')">确定</button>
+      </div>
+    </div>
+    <!-- 场景模型选择 -->
+    <div class="overlay" id="ovModel">
+      <div class="dlg msel">
+        <div class="dlg-title">选择场景模型</div>
+        <div class="mi-list" id="modelList"></div>
+        <button class="dlg-ok" onclick="closeOvl('ovModel')">取消</button>
+      </div>
+    </div>
+    <!-- 模型关系说明 -->
+    <div class="overlay" id="ovMdlHelp">
+      <div class="dlg">
+        <div class="dlg-title">能力清单与场景模型</div>
+        <div class="dlg-body" style="text-align:left;font-size:24px">
+          · 本页能力清单由地图的<b>场景模型</b>决定，不同模型支持的识别能力不同；<br><br>
+          · 地图创建时按所选场景自动匹配模型；<br><br>
+          · 默认匹配不合适时，可在<b>地图列表 → 卡片「···」→「场景模型」</b>中手动更换，手动指定后与场景解耦。
+        </div>
+        <button class="dlg-ok" onclick="closeOvl('ovMdlHelp')">我知道了</button>
+      </div>
+    </div>
+
+    <div class="mini-toast" id="mini_toast"></div>
+  </div>
+</div>
+<div class="caption">本体设置 · <b>AI 清洁策略</b>需求原型 —— 对齐真机 CC1 Pro 设置风格；演示链路：设置 → 清洁设置 → AI清洁策略（选物体策略 / 看说明 / 切场景模型 / 保存）。能力清单随场景模型下发，模型可即时切换演示。</div>
+
+<script>
+/* ================= 缩放 ================= */
+function fitScale(){
+  var d=document.querySelector('.device'),ui=document.getElementById('ui');
+  ui.style.transform='scale('+(d.clientWidth/1280)+')';
+}
+window.addEventListener('resize',fitScale);fitScale();
+
+/* ================= toast ================= */
+var _tt=null;
+function toast(msg){
+  var t=document.getElementById('mini_toast');
+  t.textContent=msg;t.style.display='block';
+  clearTimeout(_tt);_tt=setTimeout(function(){t.style.display='none'},2200);
+}
+
+/* ================= 侧栏 ================= */
+function sideGo(el,page){
+  document.querySelectorAll('.sidebar .mi').forEach(function(b){b.classList.remove('active')});
+  el.classList.add('active');
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('on')});
+  document.getElementById(page).classList.add('on');
+}
+function sideStub(el,name){
+  document.querySelectorAll('.sidebar .mi').forEach(function(b){b.classList.remove('active')});
+  el.classList.add('active');
+  toast('「'+name+'」演示原型未开放，请查看「清洁设置」');
+}
+
+/* ================= 二级页 ================= */
+function openFull(id){document.getElementById(id).classList.add('on');document.getElementById('ui').classList.add('has-full')}
+function backOut(){document.getElementById('aipolicy').classList.remove('on');document.getElementById('ui').classList.remove('has-full')}
+
+/* ================= 开关 ================= */
+document.querySelectorAll('[data-toggle]').forEach(function(tg){
+  tg.addEventListener('click',function(){
+    tg.classList.toggle('on');
+    toast(tg.classList.contains('on')?'已开启':'已关闭');
+  });
+});
+
+/* ================= 能力清单数据（来源：真机录屏） ================= */
+var ITEMS=[
+ {group:'湿垃圾',items:[
+   {nm:'无色液体',desc:'清水等无色液态污渍',tri:['清扫','避让','不处理'],def:0,c:['#D7E2EF','#EFF4F8']},
+   {nm:'有色液体',desc:'咖啡、果汁、番茄酱等有色液态污渍',tri:['清扫','避让','不处理'],def:0,c:['#C77E3F','#E8C39A']},
+   {nm:'污渍印记',desc:'地面残留的污渍痕迹与印记',tri:['清扫','避让','不处理'],def:0,c:['#C8C4BC','#EFEDE8']}
+ ]},
+ {group:'干垃圾',note:'（CC1 Pro 仅支持对下列干垃圾进行识别和避让，不能进行巡检清洁或AI自适应。但是可以在识别并避让后，记录干垃圾的位置，召唤MT系列机器人处理）',items:[
+   {nm:'白纸类',desc:'包含纸张、纸巾等白色纸类垃圾',tri:['避让','不处理'],def:1,c:['#DCE0E6','#F2F4F6']},
+   {nm:'纸壳类',desc:'包含牛皮纸碎片、纸箱碎片',tri:['避让','不处理'],def:0,c:['#B98A5E','#D9C4A8']},
+   {nm:'塑料膜类',desc:'包含塑料包装袋、缠绕膜、塑料包装皮等',tri:['避让','不处理'],def:0,c:['#BFD4E0','#E4EEF3']},
+   {nm:'饮料瓶类',desc:'包含易拉罐和饮料瓶',tri:['避让','不处理'],def:0,c:['#9FC6D8','#D6E9F0']},
+   {nm:'纸质容器类',desc:'包含一次性纸杯、咖啡杯和纸质饮料盒',tri:['避让','不处理'],def:0,c:['#D9D2C0','#F0EDE2']},
+   {nm:'树叶类',desc:'包含各种树叶',tri:['避让','不处理'],def:0,c:['#7FA98C','#C6DCCB']},
+   {nm:'木屑类',desc:'包含仓库木托盘破损等情况，产生的木头碎屑',tri:['避让','不处理'],def:0,c:['#C09A5A','#E4D2AC']},
+   {nm:'坚果壳类',desc:'包含各类坚果碎屑',tri:['避让','不处理'],def:0,c:['#8A6A48','#C4AC8C']},
+   {nm:'棉絮类',desc:'包含絮状成团物，多为白色、灰色，常见于纺织厂、家居仓库等场景',tri:['避让','不处理'],def:0,c:['#C4C9CE','#EBEEF1']}
+ ]},
+ {group:'障碍物',items:[
+   {nm:'鞋子',desc:'包含各类鞋子',tri:['避让','不处理'],def:0,c:['#AEB8C4','#E2E8EE']},
+   {nm:'底座',desc:'包含充电桩、工作站等设备底座',tri:['避让','不处理'],def:0,c:['#6E7680','#B8BEC6']},
+   {nm:'地垫',desc:'包含商场、酒店等场地出入口的迎宾垫、防潮防滑垫，会卡住边刷',tri:['避让','不处理'],def:0,c:['#5E6E80','#A9B4C0'],tag:'仅扫地生效'}
+ ]}
+];
+
+/* ================= 渲染策略列表 ================= */
+function renderList(){
+  document.getElementById('aiList').innerHTML=ITEMS.map(function(g){
+    var sec='<div class="ai-sec">'+g.group+(g.note?' <span class="note">'+g.note+'</span>':'')+'</div>';
+    var rows=g.items.map(function(it,ix){
+      var btns=it.tri.map(function(t,ti){
+        return '<button class="'+(ti===it.def?'on':'')+'" data-g="'+g.group+'" data-i="'+ix+'" data-t="'+ti+'">'+t+'</button>';
+      }).join('');
+      return '<div class="ai-row"><div class="ai-thumb" style="background:linear-gradient(135deg,'+it.c[0]+','+it.c[1]+')"></div>'
+        +'<span class="nm">'+it.nm+(it.tag?' <span class="tag">'+it.tag+'</span>':'')+' <span class="q" data-q="'+g.group+'|'+ix+'">?</span></span>'
+        +'<div class="tri">'+btns+'</div></div>';
+    }).join('');
+    return sec+'<div class="ai-card">'+rows+'</div>';
+  }).join('');
+}
+renderList();
+
+/* 策略切换（即点即选，保存后生效提示） */
+document.getElementById('aiList').addEventListener('click',function(e){
+  var b=e.target.closest('.tri button');
+  if(b){
+    var g=b.getAttribute('data-g'),i=+b.getAttribute('data-i'),t=+b.getAttribute('data-t');
+    var grp=ITEMS.filter(function(x){return x.group===g})[0];
+    grp.items[i].def=t;
+    b.parentElement.querySelectorAll('button').forEach(function(x){x.classList.remove('on')});
+    b.classList.add('on');
+    toast('「'+grp.items[i].nm+'」已选择「'+it_tri(grp.items[i],t)+'」，请点击保存生效');
+    return;
+  }
+  var q=e.target.closest('.nm .q');
+  if(q){
+    var p=q.getAttribute('data-q').split('|');
+    var grp2=ITEMS.filter(function(x){return x.group===p[0]})[0];
+    var it=grp2.items[+p[1]];
+    document.getElementById('infoTitle').textContent=it.nm;
+    document.getElementById('infoBody').textContent=it.desc;
+    document.getElementById('ovInfo').classList.add('on');
+  }
+});
+function it_tri(it,t){return it.tri[t]}
+
+function savePolicy(){
+  hideDefTip();
+  toast('AI 清洁策略已保存 ✓');
+}
+
+/* ================= 策略定义浮层 ================= */
+function showDefTip(e){e.stopPropagation();document.getElementById('defTip').classList.add('on')}
+function hideDefTip(){document.getElementById('defTip').classList.remove('on')}
+
+/* ================= 场景模型 ================= */
+var MODELS=[
+ {nm:'室内商超模型',ok:true},{nm:'地库模型',ok:true},{nm:'地垫模型',ok:true},{nm:'通用模型',ok:true},
+ {nm:'室内仓储模型',ok:false},{nm:'户外模型',ok:false},{nm:'室内工业模型',ok:false}
+];
+var curModel='室内商超模型';
+function openModelSel(){
+  document.getElementById('modelList').innerHTML=MODELS.map(function(m){
+    return '<div class="opt'+(m.nm===curModel?' sel':'')+(m.ok?'':' dis')+'" data-m="'+m.nm+'" data-ok="'+(m.ok?1:0)+'">'
+      +'<span class="radio"></span><span class="name">'+m.nm+(m.ok?'':'<span class="soon">即将上线</span>')+'</span>'
+      +(m.nm===curModel?'<span class="check">✓</span>':'')+'</div>';
+  }).join('');
+  document.getElementById('ovModel').classList.add('on');
+}
+document.getElementById('modelList').addEventListener('click',function(e){
+  var o=e.target.closest('.opt');
+  if(!o)return;
+  if(o.getAttribute('data-ok')!=='1'){toast('该模型即将上线，敬请期待');return}
+  curModel=o.getAttribute('data-m');
+  document.getElementById('mdlVal').innerHTML=curModel+'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+  closeOvl('ovModel');
+  toast('当前场景模型已切换为「'+curModel+'」，能力清单将按模型下发');
+});
+function modelHelp(e){e.stopPropagation();document.getElementById('ovMdlHelp').classList.add('on')}
+function closeOvl(id){document.getElementById(id).classList.remove('on')}
+/* 点遮罩关闭 */
+['ovInfo','ovModel','ovMdlHelp'].forEach(function(id){
+  document.getElementById(id).addEventListener('click',function(e){if(e.target===document.getElementById(id))closeOvl(id)});
+});
+</script>
+</body>
+</html>
