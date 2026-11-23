@@ -102,6 +102,24 @@ body{background:#171A1F;display:flex;flex-direction:column;align-items:center;ju
 .mdl-card .mh{margin-left:auto;width:32px;height:32px;border-radius:50%;border:2px solid #9AA1AB;color:#9AA1AB;font-size:22px;display:flex;align-items:center;justify-content:center}
 .mdl-card .r2{font-size:22px;color:var(--c-text-2);margin-top:10px;line-height:1.5}
 .mdl-card .r2 b{color:var(--c-text-1);font-weight:600}
+.mdl-card .r3{font-size:22px;color:var(--c-primary);font-weight:600;margin-top:12px;cursor:pointer}
+.mdl-card .r3:hover{text-decoration:underline}
+/* 各场景模型能力对照弹窗 */
+.dlg.caps{width:1040px}
+.caps .caps-bd{max-height:620px;overflow-y:auto;padding:0 26px;text-align:left}
+.caps .cap-hint{font-size:20px;color:var(--c-text-2);text-align:center;margin:0 0 12px}
+.cap-tb{width:100%;border-collapse:collapse;font-size:20px;background:#fff;border-radius:10px;overflow:hidden}
+.cap-tb th{background:#EAF0FA;color:var(--c-text-1);font-weight:600;padding:10px 6px;font-size:19px;line-height:1.3}
+.cap-tb th.c1{text-align:left;padding-left:14px;width:150px}
+.cap-tb td{padding:9px 6px;text-align:center;color:var(--c-text-1);border-top:1px solid #EEF1F5;line-height:1.3}
+.cap-tb td.c1{text-align:left;padding-left:14px}
+.cap-tb tr.sec td{background:#F5F7FA;color:var(--c-text-2);font-weight:600;text-align:left;padding-left:14px;font-size:19px}
+.cap-tb td.y{color:#12B76A;font-weight:700}
+.cap-tb td.n{color:#C3C9D2}
+.cap-tb td.q{color:#E8930C;font-weight:700}
+.cap-tb td.q i{font-style:normal;font-size:15px;vertical-align:super}
+.caps .cap-notes{font-size:19px;color:var(--c-text-2);line-height:1.7;margin:14px 2px 4px}
+.caps .dlg-ok{width:420px}
 
 /* ===== 弹层 ===== */
 .overlay{display:none;position:absolute;inset:0;background:rgba(0,0,0,.42);z-index:30;align-items:center;justify-content:center}
@@ -179,14 +197,15 @@ body{background:#171A1F;display:flex;flex-direction:column;align-items:center;ju
         <div class="ai-head"><span style="color:var(--c-primary);font-weight:700">AI</span>AI清洁策略 <span class="q" onclick="showDefTip(event)">?</span><button class="save" onclick="savePolicy()">保存</button></div>
 
         <div style="padding:0 16px">
-          <!-- 当前场景模型（能力清单来源） -->
-          <div class="mdl-card" onclick="openModelSel()">
+          <!-- 当前地图的场景模型（仅展示，不支持在此切换） -->
+          <div class="mdl-card">
             <div class="r1">
               <span class="lab">当前地图的场景模型</span>
-              <span class="val" id="mdlVal">室内商超模型<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
-              <span class="mh" onclick="event.stopPropagation();modelHelp(event)">?</span>
+              <span class="val" id="mdlVal">室内商超模型</span>
+              <span class="mh" onclick="modelHelp(event)">?</span>
             </div>
-            <div class="r2">不同地图关联不同的<b>场景模型</b>，不同模型的能力列表不一致；本页展示当前地图场景模型的能力清单，切换模型后同步更新。</div>
+            <div class="r2">不同地图关联不同的<b>场景模型</b>，不同模型的能力列表不一致；本页仅展示当前地图场景模型的能力清单，更换模型请前往<b>地图列表</b>操作。</div>
+            <div class="r3" onclick="openCaps()">查看其他场景模型支持的能力 ›</div>
           </div>
 
           <div id="aiList"></div>
@@ -211,12 +230,41 @@ body{background:#171A1F;display:flex;flex-direction:column;align-items:center;ju
         <button class="dlg-ok" onclick="closeOvl('ovInfo')">确定</button>
       </div>
     </div>
-    <!-- 场景模型选择 -->
-    <div class="overlay" id="ovModel">
-      <div class="dlg msel">
-        <div class="dlg-title">选择场景模型</div>
-        <div class="mi-list" id="modelList"></div>
-        <button class="dlg-ok" onclick="closeOvl('ovModel')">取消</button>
+    <!-- 各场景模型能力对照（数据源：场景模型能力清单 Sheet7） -->
+    <div class="overlay" id="ovCaps">
+      <div class="dlg caps">
+        <div class="dlg-title">各场景模型支持的能力</div>
+        <div class="caps-bd">
+          <div class="cap-hint">以 CC1 系列为例 · ✓ = 支持，— = 不支持</div>
+          <table class="cap-tb">
+            <tr><th class="c1">能力</th><th>通用模型</th><th>室内商超<br>模型</th><th>地库模型</th><th>地垫模型</th><th>室内仓储<br>模型*</th><th>户外<br>模型*</th></tr>
+            <tr class="sec"><td colspan="7">湿污渍</td></tr>
+            <tr><td class="c1">液体</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td></tr>
+            <tr><td class="c1">污渍印记</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td></tr>
+            <tr class="sec"><td colspan="7">干垃圾</td></tr>
+            <tr><td class="c1">白纸类</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td></tr>
+            <tr><td class="c1">纸壳类</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td></tr>
+            <tr><td class="c1">塑料膜类</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td></tr>
+            <tr><td class="c1">饮料瓶类</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td></tr>
+            <tr><td class="c1">纸质容器类</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td></tr>
+            <tr><td class="c1">树叶类</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr>
+            <tr><td class="c1">木屑类</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr>
+            <tr><td class="c1">坚果壳类</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td></tr>
+            <tr><td class="c1">棉絮类</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td></tr>
+            <tr class="sec"><td colspan="7">障碍物</td></tr>
+            <tr><td class="c1">鞋子</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td></tr>
+            <tr><td class="c1">底座</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td></tr>
+            <tr><td class="c1">地垫</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td></tr>
+            <tr><td class="c1">线缆</td><td class="n">—</td><td class="q">✓<i>?</i></td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr>
+          </table>
+          <div class="cap-notes">
+            · 室内仓储模型*、户外模型*为下阶段模型，上线后开放；<br>
+            · 线缆（✓?）目前仅地库模型支持，识别范围确认中；<br>
+            · 树叶类、木屑类各模型暂均未支持；<br>
+            · 以上为 CC1 系列能力范围：MT1 系列与 CC1 一致，BG1 系列暂未支持干垃圾类识别。
+          </div>
+        </div>
+        <button class="dlg-ok" onclick="closeOvl('ovCaps')">我知道了</button>
       </div>
     </div>
     <!-- 模型关系说明 -->
@@ -224,7 +272,7 @@ body{background:#171A1F;display:flex;flex-direction:column;align-items:center;ju
       <div class="dlg">
         <div class="dlg-title">能力清单与场景模型</div>
         <div class="dlg-body" style="text-align:left;font-size:24px">
-          · 不同地图关联不同的<b>场景模型</b>，不同模型的能力列表不一致，本页展示的是当前地图场景模型的能力清单；<br><br>
+          · 不同地图关联不同的<b>场景模型</b>，不同模型的能力列表不一致，本页仅展示当前地图场景模型的能力清单，不支持在此切换；<br><br>
           · 地图创建时按所选场景自动匹配模型；<br><br>
           · 默认匹配不合适时，可在<b>地图列表 → 卡片「···」→「场景模型」</b>中手动更换，手动指定后与场景解耦。
         </div>
@@ -235,7 +283,7 @@ body{background:#171A1F;display:flex;flex-direction:column;align-items:center;ju
     <div class="mini-toast" id="mini_toast"></div>
   </div>
 </div>
-<div class="caption">本体设置 · <b>AI 清洁策略</b>需求原型 —— 对齐真机 CC1 Pro 设置风格；演示链路：设置 → 清洁设置 → AI清洁策略（选物体策略 / 看说明 / 切场景模型 / 保存）。能力清单随场景模型下发，模型可即时切换演示。</div>
+<div class="caption">本体设置 · <b>AI 清洁策略</b>需求原型 —— 对齐真机 CC1 Pro 设置风格；演示链路：设置 → 清洁设置 → AI清洁策略（选物体策略 / 看说明 / 查看各模型能力 / 保存）。能力清单随地图的场景模型下发，本页仅展示、不支持切换。</div>
 
 <script>
 /* ================= 缩放 ================= */
@@ -353,33 +401,12 @@ function savePolicy(){
 function showDefTip(e){e.stopPropagation();document.getElementById('defTip').classList.add('on')}
 function hideDefTip(){document.getElementById('defTip').classList.remove('on')}
 
-/* ================= 场景模型 ================= */
-var MODELS=[
- {nm:'室内商超模型',ok:true},{nm:'地库模型',ok:true},{nm:'地垫模型',ok:true},{nm:'通用模型',ok:true},
- {nm:'室内仓储模型',ok:false},{nm:'户外模型',ok:false},{nm:'室内工业模型',ok:false}
-];
-var curModel='室内商超模型';
-function openModelSel(){
-  document.getElementById('modelList').innerHTML=MODELS.map(function(m){
-    return '<div class="opt'+(m.nm===curModel?' sel':'')+(m.ok?'':' dis')+'" data-m="'+m.nm+'" data-ok="'+(m.ok?1:0)+'">'
-      +'<span class="radio"></span><span class="name">'+m.nm+(m.ok?'':'<span class="soon">即将上线</span>')+'</span>'
-      +(m.nm===curModel?'<span class="check">✓</span>':'')+'</div>';
-  }).join('');
-  document.getElementById('ovModel').classList.add('on');
-}
-document.getElementById('modelList').addEventListener('click',function(e){
-  var o=e.target.closest('.opt');
-  if(!o)return;
-  if(o.getAttribute('data-ok')!=='1'){toast('该模型即将上线，敬请期待');return}
-  curModel=o.getAttribute('data-m');
-  document.getElementById('mdlVal').innerHTML=curModel+'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
-  closeOvl('ovModel');
-  toast('当前地图的场景模型已切换为「'+curModel+'」，能力清单已同步更新');
-});
+/* ================= 场景模型（仅展示 + 能力对照） ================= */
+function openCaps(){document.getElementById('ovCaps').classList.add('on')}
 function modelHelp(e){e.stopPropagation();document.getElementById('ovMdlHelp').classList.add('on')}
 function closeOvl(id){document.getElementById(id).classList.remove('on')}
 /* 点遮罩关闭 */
-['ovInfo','ovModel','ovMdlHelp'].forEach(function(id){
+['ovInfo','ovCaps','ovMdlHelp'].forEach(function(id){
   document.getElementById(id).addEventListener('click',function(e){if(e.target===document.getElementById(id))closeOvl(id)});
 });
 </script>
