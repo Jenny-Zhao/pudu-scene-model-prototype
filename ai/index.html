@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>本体设置 · AI 清洁策略（场景模型能力选择）· 需求原型</title>
+<title>本体设置 · AI 清洁策略（场景专家模型能力选择）· 需求原型</title>
 <style>
 /* ============================================================
    设计令牌 —— 对齐真机原型（PUDU CC1 Pro 设置，1280×800）
@@ -94,7 +94,7 @@ body{background:#171A1F;display:flex;flex-direction:column;align-items:center;ju
 .tri button{min-width:150px;height:64px;border:none;background:transparent;font-size:26px;color:#5C626B;font-family:inherit;cursor:pointer;padding:0 10px}
 .tri button.on{background:var(--c-primary-soft);color:var(--c-primary);box-shadow:inset 0 0 0 2px var(--c-primary);border-radius:8px}
 
-/* ===== 当前场景模型行 ===== */
+/* ===== 当前场景专家模型行 ===== */
 .mdl-card{background:#fff;border-radius:14px;padding:20px 26px;margin:0 0 10px;cursor:pointer;position:relative}
 .mdl-card .r1{display:flex;align-items:center;gap:16px}
 .mdl-card .lab{font-size:24px;color:var(--c-text-2)}
@@ -105,7 +105,7 @@ body{background:#171A1F;display:flex;flex-direction:column;align-items:center;ju
 .mdl-card .r2 b{color:var(--c-text-1);font-weight:600}
 .mdl-card .r3{font-size:22px;color:var(--c-primary);font-weight:600;margin-top:12px;cursor:pointer}
 .mdl-card .r3:hover{text-decoration:underline}
-/* 各场景模型能力对照弹窗 */
+/* 各场景专家模型能力对照弹窗 */
 .dlg.caps{width:1060px}
 /* 行注释（部分类别仅部分模型支持）与当前使用模型列高亮 */
 .cap-tb tr.rn td{background:#FBFCFE;border-top:1px dashed #E3E8EF;padding:5px 6px 7px 14px;font-size:16px;color:#8A93A0;text-align:left;line-height:1.4}
@@ -202,11 +202,11 @@ body{background:#171A1F;display:flex;flex-direction:column;align-items:center;ju
         <div class="ai-head"><span style="color:var(--c-primary);font-weight:700">AI</span>AI清洁策略 <span class="q" onclick="showDefTip(event)">?</span><button class="save" onclick="savePolicy()">保存</button></div>
 
         <div style="padding:0 16px">
-          <!-- 当前地图的场景模型（仅展示，不支持在此切换） -->
+          <!-- 当前地图的场景专家模型（仅展示，不支持在此切换） -->
           <div class="mdl-card">
-            <div class="r2">不同地图关联不同的<b>场景模型</b>，不同模型的能力列表不一致，本页展示<b>所有场景模型</b>的能力清单。</div>
+            <div class="r2">不同地图关联不同的<b>场景专家模型</b>，不同模型的能力列表不一致，本页展示<b>所有场景专家模型</b>的能力清单。</div>
             <div class="r1">
-              <span class="lab">当前地图的场景模型：</span>
+              <span class="lab">当前地图的场景专家模型：</span>
               <span class="val" id="mdlVal">室内商超模型</span>
             </div>
           </div>
@@ -233,10 +233,10 @@ body{background:#171A1F;display:flex;flex-direction:column;align-items:center;ju
         <button class="dlg-ok" onclick="closeOvl('ovInfo')">确定</button>
       </div>
     </div>
-    <!-- 各场景模型能力对照（数据源：场景模型能力清单 Sheet7） -->
+    <!-- 各场景专家模型能力对照（数据源：场景专家模型能力清单 Sheet7） -->
     <div class="overlay" id="ovCaps">
       <div class="dlg caps">
-        <div class="dlg-title">各场景模型支持的能力</div>
+        <div class="dlg-title">各场景专家模型支持的能力</div>
         <div class="caps-bd">
           <div class="cap-hint">当前地图使用：<b style="color:#1F66F1">室内商超模型</b>（蓝色列）· 以 CC1 系列为例 · ✓ = 支持，— = 不支持</div>
           <table class="cap-tb">
@@ -251,7 +251,7 @@ body{background:#171A1F;display:flex;flex-direction:column;align-items:center;ju
             <tr><td class="c1">饮料瓶类</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr>
             <tr><td class="c1">纸质容器类</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr>
             <tr><td class="c1">树叶类</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr><tr class="rn"><td colspan="8">注：树叶类目前仅通用模型支持</td></tr>
-            <tr><td class="c1">木屑类</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr><tr class="rn"><td colspan="8">注：木屑类各场景模型暂均未支持</td></tr>
+            <tr><td class="c1">木屑类</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr><tr class="rn"><td colspan="8">注：木屑类各场景专家模型暂均未支持</td></tr>
             <tr><td class="c1">坚果壳类</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr>
             <tr><td class="c1">棉絮类</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr><tr class="rn"><td colspan="8">注：棉絮类地库模型暂不支持</td></tr>
             <tr class="sec"><td colspan="8">障碍物</td></tr>
@@ -270,11 +270,11 @@ body{background:#171A1F;display:flex;flex-direction:column;align-items:center;ju
     <!-- 模型关系说明 -->
     <div class="overlay" id="ovMdlHelp">
       <div class="dlg">
-        <div class="dlg-title">能力清单与场景模型</div>
+        <div class="dlg-title">能力清单与场景专家模型</div>
         <div class="dlg-body" style="text-align:left;font-size:24px">
-          · 不同地图关联不同的<b>场景模型</b>，不同模型的能力列表不一致，本页仅展示当前地图场景模型的能力清单，不支持在此切换；<br><br>
+          · 不同地图关联不同的<b>场景专家模型</b>，不同模型的能力列表不一致，本页仅展示当前地图场景专家模型的能力清单，不支持在此切换；<br><br>
           · 地图创建时按所选场景自动匹配模型；<br><br>
-          · 默认匹配不合适时，可在<b>地图列表 → 卡片「···」→「场景模型」</b>中手动更换，手动指定后与场景解耦。
+          · 默认匹配不合适时，可在<b>地图列表 → 卡片「···」→「场景专家模型」</b>中手动更换，手动指定后与场景解耦。
         </div>
         <button class="dlg-ok" onclick="closeOvl('ovMdlHelp')">我知道了</button>
       </div>
@@ -283,7 +283,7 @@ body{background:#171A1F;display:flex;flex-direction:column;align-items:center;ju
     <div class="mini-toast" id="mini_toast"></div>
   </div>
 </div>
-<div class="caption">本体设置 · <b>AI 清洁策略</b>需求原型 —— 对齐真机 CC1 Pro 设置风格；演示链路：设置 → 清洁设置 → AI清洁策略（选物体策略 / 看说明 / 查看各模型能力 / 保存）。能力清单随地图的场景模型下发，本页仅展示、不支持切换。</div>
+<div class="caption">本体设置 · <b>AI 清洁策略</b>需求原型 —— 对齐真机 CC1 Pro 设置风格；演示链路：设置 → 清洁设置 → AI清洁策略（选物体策略 / 看说明 / 查看各模型能力 / 保存）。能力清单随地图的场景专家模型下发，本页仅展示、不支持切换。</div>
 
 <script>
 /* ================= 缩放 ================= */
@@ -400,7 +400,7 @@ function savePolicy(){
 function showDefTip(e){e.stopPropagation();document.getElementById('defTip').classList.add('on')}
 function hideDefTip(){document.getElementById('defTip').classList.remove('on')}
 
-/* ================= 场景模型（仅展示 + 能力对照） ================= */
+/* ================= 场景专家模型（仅展示 + 能力对照） ================= */
 function openCaps(){document.getElementById('ovCaps').classList.add('on')}
 function modelHelp(e){e.stopPropagation();document.getElementById('ovMdlHelp').classList.add('on')}
 function closeOvl(id){document.getElementById(id).classList.remove('on')}
