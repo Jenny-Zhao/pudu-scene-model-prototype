@@ -89,6 +89,7 @@ body{background:#171A1F;display:flex;flex-direction:column;align-items:center;ju
 .ai-row .nm{font-size:29px;color:var(--c-text-1);display:flex;align-items:center;gap:10px;min-width:300px}
 .ai-row .nm .q{width:30px;height:30px;border-radius:50%;border:2px solid #9AA1AB;color:#9AA1AB;font-size:21px;display:flex;align-items:center;justify-content:center;flex:none;cursor:pointer}
 .ai-row .nm .tag{font-size:20px;color:var(--c-primary);background:var(--c-primary-soft);border-radius:999px;padding:2px 14px;white-space:nowrap}
+.ai-row .nm .tag.long{white-space:normal;line-height:1.4;vertical-align:middle}
 .tri{margin-left:auto;display:flex;background:#EEF0F3;border-radius:8px;overflow:hidden;flex:none}
 .tri button{min-width:150px;height:64px;border:none;background:transparent;font-size:26px;color:#5C626B;font-family:inherit;cursor:pointer;padding:0 10px}
 .tri button.on{background:var(--c-primary-soft);color:var(--c-primary);box-shadow:inset 0 0 0 2px var(--c-primary);border-radius:8px}
@@ -330,8 +331,7 @@ document.querySelectorAll('[data-toggle]').forEach(function(tg){
 /* ================= 能力清单数据（来源：真机录屏） ================= */
 var ITEMS=[
  {group:'湿垃圾',items:[
-   {nm:'无色液体',desc:'清水等无色液态污渍',tri:['清扫','避让','不处理'],def:0,c:['#D7E2EF','#EFF4F8']},
-   {nm:'有色液体',desc:'咖啡、果汁、番茄酱等有色液态污渍',tri:['清扫','避让','不处理'],def:0,c:['#C77E3F','#E8C39A']},
+   {nm:'液体',desc:'包含清水、咖啡、果汁、番茄酱等各类液态污渍',tri:['清扫','避让','不处理'],def:0,c:['#D7E2EF','#EFF4F8']},
    {nm:'污渍印记',desc:'地面残留的污渍痕迹与印记',tri:['清扫','避让','不处理'],def:0,c:['#C8C4BC','#EFEDE8']}
  ]},
  {group:'干垃圾',note:'（CC1 Pro 仅支持对下列干垃圾进行识别和避让，不能进行巡检清洁或AI自适应。但是可以在识别并避让后，记录干垃圾的位置，召唤MT系列机器人处理）',items:[
@@ -340,15 +340,15 @@ var ITEMS=[
    {nm:'塑料膜类',desc:'包含塑料包装袋、缠绕膜、塑料包装皮等',tri:['避让','不处理'],def:0,c:['#BFD4E0','#E4EEF3']},
    {nm:'饮料瓶类',desc:'包含易拉罐和饮料瓶',tri:['避让','不处理'],def:0,c:['#9FC6D8','#D6E9F0']},
    {nm:'纸质容器类',desc:'包含一次性纸杯、咖啡杯和纸质饮料盒',tri:['避让','不处理'],def:0,c:['#D9D2C0','#F0EDE2']},
-   {nm:'树叶类',desc:'包含各种树叶',tri:['避让','不处理'],def:0,c:['#7FA98C','#C6DCCB']},
-   {nm:'木屑类',desc:'包含仓库木托盘破损等情况，产生的木头碎屑',tri:['避让','不处理'],def:0,c:['#C09A5A','#E4D2AC']},
+   {nm:'树叶类',desc:'包含各种树叶',tri:['避让','不处理'],def:0,c:['#7FA98C','#C6DCCB'],tag:'不支持室内商超模型、地库模型、住宅模型'},
+   {nm:'木屑类',desc:'包含仓库木托盘破损等情况，产生的木头碎屑',tri:['避让','不处理'],def:0,c:['#C09A5A','#E4D2AC'],tag:'不支持室内商超模型、地库模型、住宅模型'},
    {nm:'坚果壳类',desc:'包含各类坚果碎屑',tri:['避让','不处理'],def:0,c:['#8A6A48','#C4AC8C']},
-   {nm:'棉絮类',desc:'包含絮状成团物，多为白色、灰色，常见于纺织厂、家居仓库等场景',tri:['避让','不处理'],def:0,c:['#C4C9CE','#EBEEF1']}
+   {nm:'棉絮类',desc:'包含絮状成团物，多为白色、灰色，常见于纺织厂、家居仓库等场景',tri:['避让','不处理'],def:0,c:['#C4C9CE','#EBEEF1'],tag:'不支持地库模型'}
  ]},
  {group:'障碍物',items:[
    {nm:'鞋子',desc:'包含各类鞋子',tri:['避让','不处理'],def:0,c:['#AEB8C4','#E2E8EE']},
-   {nm:'底座',desc:'包含充电桩、工作站等设备底座',tri:['避让','不处理'],def:0,c:['#6E7680','#B8BEC6']},
-   {nm:'地垫',desc:'包含商场、酒店等场地出入口的迎宾垫、防潮防滑垫，会卡住边刷',tri:['避让','不处理'],def:0,c:['#5E6E80','#A9B4C0'],tag:'仅扫地生效'}
+   {nm:'底座',desc:'包含充电桩、工作站等设备底座',tri:['避让','不处理'],def:0,c:['#6E7680','#B8BEC6'],tag:'不支持地库模型'},
+   {nm:'地垫',desc:'包含商场、酒店等场地出入口的迎宾垫、防潮防滑垫，会卡住边刷',tri:['避让','不处理'],def:0,c:['#5E6E80','#A9B4C0'],tag:['仅扫地生效','不支持地库模型']}
  ]}
 ];
 
@@ -361,7 +361,7 @@ function renderList(){
         return '<button class="'+(ti===it.def?'on':'')+'" data-g="'+g.group+'" data-i="'+ix+'" data-t="'+ti+'">'+t+'</button>';
       }).join('');
       return '<div class="ai-row"><div class="ai-thumb" style="background:linear-gradient(135deg,'+it.c[0]+','+it.c[1]+')"></div>'
-        +'<span class="nm">'+it.nm+(it.tag?' <span class="tag">'+it.tag+'</span>':'')+' <span class="q" data-q="'+g.group+'|'+ix+'">?</span></span>'
+        +'<span class="nm">'+it.nm+((it.tag?' <span class="tag">'+(Array.isArray(it.tag)?it.tag.map(function(t){return '<span class="tag'+(t.length>10?' long':'')+'">'+t+'</span>'}).join(''):('<span class="tag'+(it.tag.length>10?' long':'')+'">'+it.tag+'</span>'))+'</span>':''))+' <span class="q" data-q="'+g.group+'|'+ix+'">?</span></span>'
         +'<div class="tri">'+btns+'</div></div>';
     }).join('');
     return sec+'<div class="ai-card">'+rows+'</div>';
