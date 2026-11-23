@@ -182,11 +182,11 @@ body{background:#171A1F;display:flex;flex-direction:column;align-items:center;ju
           <!-- 当前场景模型（能力清单来源） -->
           <div class="mdl-card" onclick="openModelSel()">
             <div class="r1">
-              <span class="lab">当前场景模型</span>
+              <span class="lab">当前地图的场景模型</span>
               <span class="val" id="mdlVal">室内商超模型<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
               <span class="mh" onclick="event.stopPropagation();modelHelp(event)">?</span>
             </div>
-            <div class="r2">能力清单随地图的<b>场景模型</b>自动匹配；切换模型后，本页能力列表同步更新。</div>
+            <div class="r2">不同地图关联不同的<b>场景模型</b>，不同模型的能力列表不一致；本页展示当前地图场景模型的能力清单，切换模型后同步更新。</div>
           </div>
 
           <div id="aiList"></div>
@@ -224,7 +224,7 @@ body{background:#171A1F;display:flex;flex-direction:column;align-items:center;ju
       <div class="dlg">
         <div class="dlg-title">能力清单与场景模型</div>
         <div class="dlg-body" style="text-align:left;font-size:24px">
-          · 本页能力清单由地图的<b>场景模型</b>决定，不同模型支持的识别能力不同；<br><br>
+          · 不同地图关联不同的<b>场景模型</b>，不同模型的能力列表不一致，本页展示的是当前地图场景模型的能力清单；<br><br>
           · 地图创建时按所选场景自动匹配模型；<br><br>
           · 默认匹配不合适时，可在<b>地图列表 → 卡片「···」→「场景模型」</b>中手动更换，手动指定后与场景解耦。
         </div>
@@ -374,7 +374,7 @@ document.getElementById('modelList').addEventListener('click',function(e){
   curModel=o.getAttribute('data-m');
   document.getElementById('mdlVal').innerHTML=curModel+'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
   closeOvl('ovModel');
-  toast('当前场景模型已切换为「'+curModel+'」，能力清单将按模型下发');
+  toast('当前地图的场景模型已切换为「'+curModel+'」，能力清单已同步更新');
 });
 function modelHelp(e){e.stopPropagation();document.getElementById('ovMdlHelp').classList.add('on')}
 function closeOvl(id){document.getElementById(id).classList.remove('on')}
