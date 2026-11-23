@@ -204,12 +204,12 @@ body{background:#171A1F;display:flex;flex-direction:column;align-items:center;ju
         <div style="padding:0 16px">
           <!-- 当前地图的场景模型（仅展示，不支持在此切换） -->
           <div class="mdl-card">
+            <div class="r2">不同地图关联不同的<b>场景模型</b>，不同模型的能力列表不一致，本页展示<b>所有场景模型</b>的能力清单。</div>
             <div class="r1">
-              <span class="lab">当前地图的场景模型</span>
+              <span class="lab">当前地图的场景模型：</span>
               <span class="val" id="mdlVal">室内商超模型</span>
               <span class="mh" onclick="modelHelp(event)">?</span>
             </div>
-            <div class="r2">不同地图关联不同的<b>场景模型</b>，不同模型的能力列表不一致；本页仅展示当前地图场景模型的能力清单，更换模型请前往<b>地图列表</b>操作。</div>
             <div class="r3" onclick="openCaps()">查看其他场景模型支持的能力 ›</div>
           </div>
 
@@ -361,7 +361,7 @@ function renderList(){
         return '<button class="'+(ti===it.def?'on':'')+'" data-g="'+g.group+'" data-i="'+ix+'" data-t="'+ti+'">'+t+'</button>';
       }).join('');
       return '<div class="ai-row"><div class="ai-thumb" style="background:linear-gradient(135deg,'+it.c[0]+','+it.c[1]+')"></div>'
-        +'<span class="nm">'+it.nm+((it.tag?' <span class="tag">'+(Array.isArray(it.tag)?it.tag.map(function(t){return '<span class="tag'+(t.length>10?' long':'')+'">'+t+'</span>'}).join(''):('<span class="tag'+(it.tag.length>10?' long':'')+'">'+it.tag+'</span>'))+'</span>':''))+' <span class="q" data-q="'+g.group+'|'+ix+'">?</span></span>'
+        +'<span class="nm">'+it.nm+((it.tag?' <span class="tag">'+(Array.isArray(it.tag)?it.tag.map(function(t){return '<span class="tag'+(t.length>10?' long':'')+'">'+t+'</span>'}).join('<br>'):('<span class="tag'+(it.tag.length>10?' long':'')+'">'+it.tag+'</span>'))+'</span>':''))+' <span class="q" data-q="'+g.group+'|'+ix+'">?</span></span>'
         +'<div class="tri">'+btns+'</div></div>';
     }).join('');
     return sec+'<div class="ai-card">'+rows+'</div>';
