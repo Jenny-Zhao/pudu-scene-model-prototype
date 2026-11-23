@@ -105,7 +105,11 @@ body{background:#171A1F;display:flex;flex-direction:column;align-items:center;ju
 .mdl-card .r3{font-size:22px;color:var(--c-primary);font-weight:600;margin-top:12px;cursor:pointer}
 .mdl-card .r3:hover{text-decoration:underline}
 /* 各场景模型能力对照弹窗 */
-.dlg.caps{width:800px}
+.dlg.caps{width:1060px}
+/* 行注释（部分类别仅部分模型支持）与当前使用模型列高亮 */
+.cap-tb tr.rn td{background:#FBFCFE;border-top:1px dashed #E3E8EF;padding:5px 6px 7px 14px;font-size:16px;color:#8A93A0;text-align:left;line-height:1.4}
+.cap-tb th.cur{background:#1F66F1;color:#fff}
+.cap-tb td.cur{background:#F0F5FF}
 .caps .caps-bd{max-height:620px;overflow-y:auto;padding:0 26px;text-align:left}
 .caps .cap-hint{font-size:20px;color:var(--c-text-2);text-align:center;margin:0 0 12px}
 .cap-tb{width:100%;border-collapse:collapse;font-size:20px;background:#fff;border-radius:10px;overflow:hidden}
@@ -235,29 +239,29 @@ body{background:#171A1F;display:flex;flex-direction:column;align-items:center;ju
       <div class="dlg caps">
         <div class="dlg-title">各场景模型支持的能力</div>
         <div class="caps-bd">
-          <div class="cap-hint">以 CC1 系列为例 · ✓ = 支持，— = 不支持</div>
+          <div class="cap-hint">当前地图使用：<b style="color:#1F66F1">室内商超模型</b>（蓝色列）· 以 CC1 系列为例 · ✓ = 支持，— = 不支持</div>
           <table class="cap-tb">
-            <tr><th class="c1">能力</th><th>通用模型</th><th>室内商超<br>模型</th><th>地库模型</th><th>地垫模型</th></tr>
-            <tr class="sec"><td colspan="5">湿污渍</td></tr>
-            <tr><td class="c1">液体</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
-            <tr><td class="c1">污渍印记</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
-            <tr class="sec"><td colspan="5">干垃圾</td></tr>
-            <tr><td class="c1">白纸类</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
-            <tr><td class="c1">纸壳类</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
-            <tr><td class="c1">塑料膜类</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
-            <tr><td class="c1">饮料瓶类</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
-            <tr><td class="c1">纸质容器类</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
-            <tr><td class="c1">树叶类</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr>
-            <tr><td class="c1">木屑类</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr>
-            <tr><td class="c1">坚果壳类</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
-            <tr><td class="c1">棉絮类</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="y">✓</td></tr>
-            <tr class="sec"><td colspan="5">障碍物</td></tr>
-            <tr><td class="c1">鞋子</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
-            <tr><td class="c1">底座</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="y">✓</td></tr>
-            <tr><td class="c1">地垫</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="y">✓</td></tr>
+            <tr><th class="c1">能力</th><th>通用模型</th><th class="cur">室内商超<br>模型</th><th>地库模型</th><th>地垫模型</th><th>室内仓储<br>模型*</th><th>户外<br>模型*</th><th>室内工业<br>模型*</th></tr>
+            <tr class="sec"><td colspan="8">湿污渍</td></tr>
+            <tr><td class="c1">液体</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr>
+            <tr><td class="c1">污渍印记</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr>
+            <tr class="sec"><td colspan="8">干垃圾</td></tr>
+            <tr><td class="c1">白纸类</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr>
+            <tr><td class="c1">纸壳类</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr>
+            <tr><td class="c1">塑料膜类</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr>
+            <tr><td class="c1">饮料瓶类</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr>
+            <tr><td class="c1">纸质容器类</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr>
+            <tr><td class="c1">树叶类</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr><tr class="rn"><td colspan="8">注：树叶类目前仅通用模型支持</td></tr>
+            <tr><td class="c1">木屑类</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr><tr class="rn"><td colspan="8">注：木屑类各场景模型暂均未支持</td></tr>
+            <tr><td class="c1">坚果壳类</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr>
+            <tr><td class="c1">棉絮类</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr><tr class="rn"><td colspan="8">注：棉絮类地库模型暂不支持</td></tr>
+            <tr class="sec"><td colspan="8">障碍物</td></tr>
+            <tr><td class="c1">鞋子</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr>
+            <tr><td class="c1">底座</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr><tr class="rn"><td colspan="8">注：底座地库模型暂不支持</td></tr>
+            <tr><td class="c1">地垫</td><td class="y">✓</td><td class="y">✓</td><td class="n">—</td><td class="y">✓</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr><tr class="rn"><td colspan="8">注：地垫地库模型暂不支持</td></tr>
           </table>
           <div class="cap-notes">
-            · 树叶类目前仅通用模型支持；木屑类各模型暂均未支持；<br>
+            · 室内仓储模型*、户外模型*、室内工业模型*为下阶段模型，上线后开放；<br>
             · 以上为 CC1 系列能力范围：MT1 系列与 CC1 一致，BG1 系列暂未支持干垃圾类识别。
           </div>
         </div>
