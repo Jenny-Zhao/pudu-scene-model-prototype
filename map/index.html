@@ -709,6 +709,9 @@ body{background:#171A1F;display:flex;flex-direction:column;align-items:center;ju
 .mp-note{margin-top:10px;padding:10px 14px;background:#F4F8FF;border-left:4px solid var(--blue);border-radius:4px;font-size:17px;color:var(--sub);line-height:1.5;min-height:44px}
 .fm-match{margin-top:8px;font-size:18px;color:var(--blue);font-weight:600}
 .fm-match .d{display:block;margin-top:4px;font-size:16px;color:var(--hint);font-weight:400;line-height:1.5}
+/* 设备已有特殊定制模型 · 场景选择提醒条 */
+.fm-warn{display:flex;align-items:flex-start;gap:6px;margin-top:10px;padding:10px 14px;border-radius:8px;background:#FFF7E8;border:1px solid #F5D08C;font-size:16px;color:#8A5A00;line-height:1.5;text-align:left}
+.fm-warn i{font-style:normal;flex:none;font-weight:700}
 /* 模型能力关键词高亮（弹窗注释 / 建图信息匹配说明 / 帮助弹窗通用） */
 .k-o{color:#E8590C;font-weight:600}
 .k-p{color:#7048E8;font-weight:600}
@@ -18557,6 +18560,8 @@ var SCENES=['零售商超（综合超市&便利店&药店等）','地库（室�
 /* 场景 → 场景模型默认匹配（专属模型尚未支持的场景，暂用通用模型兜底） */
 var SCENE_MODEL={'零售商超（综合超市&便利店&药店等）':'室内商超模型','地库（室内停车场）':'地库模型','工业（工厂&车间等）':'通用模型','户外（户外停车场&户外园区等）':'通用模型','仓储物流（仓库&物流中心等）':'通用模型','社区物业（写字楼&社区楼宇）':'地垫模型','交通枢纽（车站&机场等）':'通用模型','酒店':'通用模型','文娱体育（健身房&体育馆&会所等）':'通用模型','教育（培训机构&学校等）':'通用模型','医疗场所（医疗中心&综合医院等）':'通用模型','其他':'通用模型'};
 var MODEL_BASE='通用模型';
+/* 演示前提：当前设备已安装特殊定制模型（置 false 可隐藏提醒，查看无定制机型时的状态） */
+var DEVICE_CUSTOM_MODEL=true;
 /* 可选模型与识别能力注释（选中后在弹窗下方展示） */
 var MODEL_LIST=['室内商超模型','地库模型','地垫模型','通用模型'];
 /* 模型能力注释（HTML）：识别对象按类别着色，突出不同模型的识别能力差异 */
@@ -19127,6 +19132,10 @@ function renderAi(){
   var el=document.getElementById('fmMatch');
   if(!el)return;
   el.innerHTML='已匹配场景模型：'+m+'<span class="d">'+(MODEL_DESC[m]||'')+'</span>';
+  /* 设备已有特殊定制模型：选非「其他」场景时提醒，选「其他」即可使用 */
+  if(DEVICE_CUSTOM_MODEL&&wiz.scene&&wiz.scene!=='其他'){
+    el.innerHTML+='<div class="fm-warn"><i>⚠</i><span>当前设备已有特殊定制模型，若需使用，请选择场景为「其他」</span></div>';
+  }
 }
 function renderMt(){
   document.getElementById('mtVal').textContent=wiz.type;
