@@ -1268,6 +1268,50 @@ body{background:#171A1F;display:flex;flex-direction:column;align-items:center;ju
     </div>
   </div>
 
+  <!-- ==================== ④ 其他定制模型（设备已有定制模型 · 通用/定制切换演示页） ==================== -->
+  <div class="fp" id="p_custom">
+    <div class="list-hd">
+      <span class="t">地图列表</span>
+      <div class="tr">
+        <button class="sync">同步</button>
+        <button class="new">新建</button>
+      </div>
+    </div>
+    <div class="cards" style="pointer-events:none">
+      <div class="mcard"><div class="th"><svg viewBox="0 0 300 210" preserveAspectRatio="none"><path d="M96 34 L168 28 L172 62 L216 58 L219 30 L272 34 L275 76 L296 79 L298 128 L238 131 L241 186 L188 183 L186 152 L128 155 L125 100 L96 98 L94 62 L74 60 L72 40 L95 38 Z" fill="#BFD6F3" stroke="#7FA8E0" stroke-width="2" stroke-linejoin="round"/></svg></div><div class="nm">实验楼三层部署地图</div><div class="tp">激光 + VSLAM + Marker · 其他 · 3 楼</div></div>
+      <div class="mcard"><div class="th"><svg viewBox="0 0 300 210" preserveAspectRatio="none"><path d="M96 34 L168 28 L172 62 L216 58 L219 30 L272 34 L275 76 L296 79 L298 128 L238 131 L241 186 L188 183 L186 152 L128 155 L125 100 L96 98 L94 62 L74 60 L72 40 L95 38 Z" fill="#BFD6F3" stroke="#7FA8E0" stroke-width="2" stroke-linejoin="round"/></svg></div><div class="nm">商用超市一层部署地图<span class="use">使用中</span></div><div class="tp">激光 + Marker · 零售商超 · 1 楼</div></div>
+    </div>
+    <div class="mp-ovl on" style="z-index:70">
+      <div class="mp-modal">
+        <div class="mp-hd">场景专家模型</div>
+        <div class="mp-hint">当前设备已安装定制模型，可在「通用模型」与「其他定制模型」间切换；默认随场景自动匹配，手动指定后与场景解耦。</div>
+        <div class="mp-bd">
+          <div class="mp-row">
+            <div class="mp-lab">所属场景</div>
+            <div class="sm-scene">其他</div>
+          </div>
+          <div class="mp-row">
+            <div class="mp-lab">场景默认专家模型</div>
+            <div class="sm-scene">通用模型</div>
+          </div>
+          <div class="mp-row">
+            <div class="mp-lab">场景专家模型</div>
+            <div>
+              <div class="mp-models" id="cmModels"></div>
+              <div class="mp-note" id="cmNote"></div>
+              <div class="mp-auto" id="cmAuto"></div>
+              <button class="mp-rst" id="cmRst" onclick="cmReset()" style="display:none">恢复为场景默认模型</button>
+            </div>
+          </div>
+        </div>
+        <div class="mp-ft">
+          <button class="mp-btn sec" onclick="toast('演示页面：可在上方直接点击模型体验通用模型与定制模型切换')">取消</button>
+          <button class="mp-btn pri" onclick="cmSave()">保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- 地图基础属性编辑（地图列表页 · 名称/楼层/场景） -->
   <div class="mp-ovl" id="mpOvl">
     <div class="mp-modal">
@@ -18451,8 +18495,9 @@ function renderPushPins(){
   <button data-go="p_list">① 地图列表</button>
   <button data-go="p_info">② 建图信息</button>
   <button data-go="p_mode">③ 建图方式</button>
+  <button data-go="p_custom">④ 其他定制模型</button>
 </div>
-<div class="caption">地图场景专家模型 · 产品原型 —— 覆盖「地图列表 / 建图信息 / 建图方式」三页。演示链路：列表「新建」→ 建图信息选场景（自动匹配场景专家模型）→ 建图方式「完成创建」→ 回到列表查看结果；列表卡片「···」→「场景专家模型」可切换模型并查看识别能力注释。</div>
+<div class="caption">地图场景专家模型 · 产品原型 —— 覆盖「地图列表 / 建图信息 / 建图方式 / 其他定制模型」。演示链路：列表「新建」→ 建图信息选场景（自动匹配场景专家模型）→ 建图方式「完成创建」→ 回到列表查看结果；列表卡片「···」→「场景专家模型」可切换模型并查看识别能力注释；④ 页演示设备已有定制模型时，通用模型与定制模型的切换。</div>
 
 <script>
 /* ================= 元素定义（四大分类） ================= */
@@ -18512,10 +18557,10 @@ var counts={};drawn.forEach(function(e){counts[e.type]=(counts[e.type]||0)+1});
 var edVis={},edSel=null,edPreview=false,pinMode=false,pinPts=[],pushPins=[],cloudUpload=false;
 LEG.forEach(function(t){edVis[t]=true});
 /* ================= 框架 ================= */
-var PAGES=['p_list','p_info','p_mode','p_prep','p_init','p_push','p_opt','p_edit_old','p_edit2','p_draw_old','p_save'];
+var PAGES=['p_list','p_info','p_mode','p_custom','p_prep','p_init','p_push','p_opt','p_edit_old','p_edit2','p_draw_old','p_save'];
 function go(id){
-  /* 独立需求原型仅开放三页，其余页面由建图 2.0 主原型承载 */
-  if(id!=='p_list'&&id!=='p_info'&&id!=='p_mode')id='p_list';
+  /* 独立需求原型仅开放四页，其余页面由建图 2.0 主原型承载 */
+  if(id!=='p_list'&&id!=='p_info'&&id!=='p_mode'&&id!=='p_custom')id='p_list';
   PAGES.forEach(function(p){document.getElementById(p).classList.toggle('on',p===id)});
   document.querySelectorAll('.proto-nav button').forEach(function(b){b.classList.toggle('cur',b.getAttribute('data-go')===id)});
   var hideSbar=(id==='p_push'||id==='p_opt'||id==='p_save'||id==='p_draw_old');
@@ -18569,7 +18614,8 @@ var MODEL_DESC={
   '室内商超模型':'该模型对<span class="k-o">地灯</span>、<span class="k-p">低矮底座</span>、<span class="k-t">线缆</span>、<span class="k-g">地毯</span>有更好的识别效果',
   '地库模型':'该模型对<span class="k-o">地库减速带</span>、<span class="k-p">挡车器</span>、<span class="k-t">电车充电线</span>等线缆有更好的识别效果',
   '地垫模型':'该模型对<span class="k-g">小地垫</span>（入户垫、门口除尘垫）有更好的识别能力',
-  '通用模型':'可识别<span class="k-b">常见的障碍物与污渍</span>，无专用模型时默认使用'
+  '通用模型':'可识别<span class="k-b">常见的障碍物与污渍</span>，无专用模型时默认使用',
+  '其他定制模型':'设备专属定制模型：针对<span class="k-b">本机部署场景</span>单独训练，识别范围以定制交付为准；如需恢复通用识别能力，可切回<span class="k-b">通用模型</span>'
 };
 /* 待支持模型：置灰展示，点击提示"即将支持，敬请期待" */
 var MODEL_PENDING=['室内仓储模型','户外模型','室内工业模型'];
@@ -18821,7 +18867,7 @@ function smRender(){
   document.getElementById('smDef').textContent=def;
   /* 兜底：当前模型若不在清单内则补入，保证选中项一定可见 */
   if(opts.indexOf(MODEL_BASE)<0)opts.push(MODEL_BASE);
-  if(opts.indexOf(smModel)<0)opts.push(smModel);
+  if(opts.indexOf(smModel)<0&&smModel!=='其他定制模型')opts.push(smModel);
   var html=opts.map(function(m){
     return '<button class="mp-md'+(m===smModel?' sel':'')+'" onclick="smPick(\''+m+'\')">'+m
       +(m===def?'<span class="rec">推荐</span>':'')
@@ -18830,6 +18876,11 @@ function smRender(){
   html+=MODEL_PENDING.map(function(m){
     return '<button class="mp-md soon" onclick="smSoon()">'+m+'<span class="soon-bd">即将支持</span></button>';
   }).join('');
+  /* 设备已有定制模型：末尾追加「其他定制模型」可选 chip（可与通用模型等自由切换） */
+  if(DEVICE_CUSTOM_MODEL||smModel==='其他定制模型'){
+    html+='<button class="mp-md'+(smModel==='其他定制模型'?' sel':'')+'" onclick="smPick(\'其他定制模型\')">其他定制模型'
+      +(smModel==='其他定制模型'&&smManual?'<span class="tagc">已手动指定</span>':'')+'</button>';
+  }
   document.getElementById('smModels').innerHTML=html;
   document.getElementById('smNote').innerHTML=MODEL_DESC[smModel]||'';
   var el=document.getElementById('smAuto'),rst=document.getElementById('smRst');
@@ -18864,6 +18915,36 @@ function smSave(){
     ?'已将场景专家模型手动指定为「'+smModel+'」，与场景解耦 ✓'
     :'场景专家模型已恢复为「'+smModel+'」，跟随场景自动匹配 ✓');
 }
+/* ================= ④ 其他定制模型：设备已有定制模型 · 通用/定制切换演示页 =================
+   演示前提：场景「其他」→ 默认匹配通用模型；设备已安装定制模型时，
+   弹窗在待支持模型之后追加可选的「其他定制模型」，点击即可与通用模型互相切换。*/
+var CM_SCENE='其他',CM_DEF='通用模型',cmModel=CM_DEF,cmManual=false;
+function cmRender(){
+  var html=MODEL_LIST.map(function(m){
+    return '<button class="mp-md'+(m===cmModel?' sel':'')+'" onclick="cmPick(\''+m+'\')">'+m
+      +(m===CM_DEF?'<span class="rec">推荐</span>':'')
+      +(m!==CM_DEF&&cmManual&&m===cmModel?'<span class="tagc">已手动指定</span>':'')+'</button>';
+  }).join('');
+  html+=MODEL_PENDING.map(function(m){
+    return '<button class="mp-md soon" onclick="smSoon()">'+m+'<span class="soon-bd">即将支持</span></button>';
+  }).join('');
+  html+='<button class="mp-md'+(cmModel==='其他定制模型'?' sel':'')+'" onclick="cmPick(\'其他定制模型\')">其他定制模型'
+    +(cmModel==='其他定制模型'&&cmManual?'<span class="tagc">已手动指定</span>':'')+'</button>';
+  document.getElementById('cmModels').innerHTML=html;
+  document.getElementById('cmNote').innerHTML=MODEL_DESC[cmModel]||'';
+  var el=document.getElementById('cmAuto'),rst=document.getElementById('cmRst');
+  if(cmManual){
+    el.textContent='当前：已手动指定为「'+cmModel+'」，与场景解耦，切换场景不影响该模型';
+    el.classList.add('manual');rst.style.display='inline-block';
+  }else{
+    el.textContent='当前：按场景「'+CM_SCENE+'」自动匹配「'+CM_DEF+'」，点击其他模型可手动指定';
+    el.classList.remove('manual');rst.style.display='none';
+  }
+}
+function cmPick(m){cmModel=m;cmManual=(m!==CM_DEF);cmRender()}
+function cmReset(){cmManual=false;cmModel=CM_DEF;cmRender()}
+function cmSave(){toast('已保存：场景专家模型为「'+cmModel+'」'+(cmManual?'，与场景解耦 ✓':'，跟随场景自动匹配 ✓'))}
+cmRender();
 function mpStep(n){
   var el=document.getElementById('mpFloor');
   var v=parseInt(el.value,10)||1;v+=n;
